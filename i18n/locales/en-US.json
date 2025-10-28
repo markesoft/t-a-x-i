@@ -8,6 +8,24 @@
   "site": {
     "name": "Taxi Online"
   },
+  "profile": {
+    "title": "Profile Settings",
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "phone": "Phone Number",
+    "dateOfBirth": "Date of Birth",
+    "address": "Address",
+    "city": "City",
+    "country": "Country",
+    "bio": "Bio",
+    "preferredLanguage": "Preferred Language",
+    "saveSuccess": "Profile updated successfully",
+    "saveError": "Failed to update profile"
+  },
+  "common": {
+    "save": "Save",
+    "saving": "Saving..."
+  },
   "themes": {
     "system": "System",
     "light": "Light",
@@ -70,6 +88,9 @@
       "link": "Minimal",
       "title": "Minimal page with Fullscreen-layout",
       "p": "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eaque iste atque, hic porro officiis fugit quae deserunt nobis dolorum odit dignissimos consequatur esse maiores repellat impedit. Quae dolorum id rem?"
+    },
+    "admin": {
+      "link": "Admin"
     }
   }
 }

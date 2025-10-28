@@ -1,0 +1,239 @@
+generator client {
+  provider        = "prisma-client-js"
+  binaryTargets   = ["native", "debian-openssl-1.1.x"]
+  previewFeatures = ["typedSql"]
+  output          = "./generated/client"
+  moduleFormat    = "cjs"
+  // "esm" or "cjs"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String   @id @default(uuid())
+  name          String
+  phone         String?  @unique
+  email         String   @unique
+  role          Role     @default(PASSENGER)
+  emailVerified Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Profile fields
+  firstName         String?
+  lastName          String?
+  dateOfBirth       DateTime?
+  address           String?
+  city              String?
+  country           String?
+  bio               String?
+  image             String?
+  preferredLanguage String?   @default("en-US")
+
+  // Auth related fields
+  accounts Account[]
+  sessions Session[]
+
+  company       Company?
+  vehicles      Vehicle[]
+  trips         Trip[]         @relation("DriverTrips")
+  bookings      Booking[]
+  ratings       Rating[]
+  messagesSent  Message[]      @relation("Sender")
+  messagesRecv  Message[]      @relation("Receiver")
+  notifications Notification[]
+
+  @@map("user")
+}
+
+// NextAuth Models
+
+model Account {
+  id            String   @id @default(cuid())
+  userId        String
+  providerId    String
+  accountId     String
+  refresh_token String?
+  password      String
+  access_token  String?
+  expires_at    Int?
+  token_type    String?
+  scope         String?
+  id_token      String?
+  session_state String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+
+  @@unique([providerId, accountId])
+  @@map("account")
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  ipAddress String?
+  userAgent String?
+
+  @@map("session")
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Company {
+  id              String @id @default(uuid())
+  userId          String @unique
+  companyName     String
+  registrationNum String
+  businessPhone   String
+
+  user     User      @relation(fields: [userId], references: [id])
+  vehicles Vehicle[]
+  trips    Trip[]    @relation("CompanyTrips")
+}
+
+model Vehicle {
+  id          String      @id @default(uuid())
+  ownerId     String
+  type        VehicleType
+  model       String
+  plateNumber String
+
+  owner User   @relation(fields: [ownerId], references: [id])
+  trips Trip[]
+
+  Company Company[]
+}
+
+model Trip {
+  id             String         @id @default(uuid())
+  driverId       String
+  vehicleId      String
+  departureCity  String
+  arrivalCity    String
+  departureTime  DateTime
+  arrivalTime    DateTime
+  seatCount      Int
+  pricePerSeat   Decimal
+  isRecurring    Boolean        @default(false)
+  recurrenceType RecurrenceType
+
+  driver   User      @relation("DriverTrips", fields: [driverId], references: [id])
+  vehicle  Vehicle   @relation(fields: [vehicleId], references: [id])
+  bookings Booking[]
+  ratings  Rating[]
+  messages Message[]
+
+  Company Company[] @relation("CompanyTrips")
+}
+
+model Booking {
+  id          String        @id @default(uuid())
+  tripId      String
+  passengerId String
+  seatCount   Int
+  status      BookingStatus
+  createdAt   DateTime      @default(now())
+
+  trip      Trip @relation(fields: [tripId], references: [id])
+  passenger User @relation(fields: [passengerId], references: [id])
+}
+
+model Rating {
+  id          String   @id @default(uuid())
+  tripId      String
+  passengerId String
+  ratingValue Int
+  comment     String?
+  createdAt   DateTime @default(now())
+
+  trip      Trip @relation(fields: [tripId], references: [id])
+  passenger User @relation(fields: [passengerId], references: [id])
+}
+
+model Message {
+  id         String   @id @default(uuid())
+  senderId   String
+  receiverId String
+  tripId     String
+  content    String
+  sentAt     DateTime @default(now())
+
+  sender   User @relation("Sender", fields: [senderId], references: [id])
+  receiver User @relation("Receiver", fields: [receiverId], references: [id])
+  trip     Trip @relation(fields: [tripId], references: [id])
+}
+
+model Notification {
+  id        String           @id @default(uuid())
+  userId    String
+  type      NotificationType
+  message   String
+  isRead    Boolean          @default(false)
+  createdAt DateTime         @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+enum Role {
+  PASSENGER
+  DRIVER
+  COMPANY
+  ADMIN
+}
+
+enum VehicleType {
+  CAR
+  MINIBUS
+  BUS
+}
+
+enum RecurrenceType {
+  NONE
+  DAILY
+  WEEKLY
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+}
+
+enum NotificationType {
+  BOOKING_CONFIRMED
+  TRIP_REMINDER
+  CANCELLATION
+  GENERAL
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
+
+  @@map("verification")
+}

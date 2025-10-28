@@ -70,6 +70,9 @@
       "link": "Minimale",
       "title": "Page minimale (mise en page plein écran)",
       "p": "Dans un jardin luxuriant, tout est calme et sérénité. Des fleurs aux couleurs vives se mêlent aux feuillages sombres des grands arbres. Le parfum sucré des roses embaume l'air tandis que le vent fait danser les feuilles. On entend le chant mélodieux des oiseaux, comme une symphonie naturelle qui ne cesse jamais. Dans ce havre de paix, on se sent loin du monde, enveloppé par la beauté et la quiétude de la nature."
+    },
+    "admin": {
+      "link": "Admin"
     }
   }
 }

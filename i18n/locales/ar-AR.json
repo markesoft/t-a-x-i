@@ -70,6 +70,9 @@
       "link": "الحد الأدنى",
       "title": "الحد الأدنى من الصفحة (تخطيط ملء الشاشة)",
       "p": "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Eaque iste atque, hic porro officiis fugit quae deserunt nobis dolorum odit dignissimos consequatur esse maiores repellat impedit. Quae dolorum id rem?"
+    },
+    "admin": {
+      "link": "إدارة"
     }
   }
 }

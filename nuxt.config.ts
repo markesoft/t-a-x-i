@@ -20,6 +20,7 @@ export default defineNuxtConfig({
     "@nuxtjs/i18n",
     "@dargmuesli/nuxt-cookie-control",
     "@nuxtjs/leaflet",
+    "@vueuse/nuxt",
   ],
   nitro: {
     compressPublicAssets: true,
